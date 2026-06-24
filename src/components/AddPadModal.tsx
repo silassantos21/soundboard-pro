@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { Ionicons } from '@expo/vector-icons';
-import { ColorPicker } from './ColorPicker';
+import { EmojiPicker } from './EmojiPicker';
 import type { CreateSoundPadInput } from '../types';
 
 interface AddPadModalProps {
@@ -23,7 +23,7 @@ interface AddPadModalProps {
 
 export function AddPadModal({ visible, onClose, onSave }: AddPadModalProps) {
   const [title, setTitle] = useState('');
-  const [color, setColor] = useState('#FF4444');
+  const [emoji, setEmoji] = useState('🎵');
   const [audioUri, setAudioUri] = useState('');
   const [audioFileName, setAudioFileName] = useState('');
   const [saving, setSaving] = useState(false);
@@ -50,9 +50,9 @@ export function AddPadModal({ visible, onClose, onSave }: AddPadModalProps) {
     }
     setSaving(true);
     try {
-      await onSave({ title: title.trim(), color, audioUri, audioFileName });
+      await onSave({ title: title.trim(), emoji, audioUri, audioFileName });
       setTitle('');
-      setColor('#FF4444');
+      setEmoji('🎵');
       setAudioUri('');
       setAudioFileName('');
     } catch (err: any) {
@@ -84,10 +84,10 @@ export function AddPadModal({ visible, onClose, onSave }: AddPadModalProps) {
             autoFocus
           />
 
-          <Text style={styles.label}>Cor</Text>
-          <ColorPicker selected={color} onSelect={setColor} />
+          <Text style={styles.label}>Emoji</Text>
+          <EmojiPicker selected={emoji} onSelect={setEmoji} />
 
-          <Text style={[styles.label, { marginTop: 24 }]}>Áudio</Text>
+          <Text style={[styles.label, { marginTop: 8 }]}>Áudio</Text>
           <TouchableOpacity style={styles.audioBtn} onPress={pickAudio} activeOpacity={0.8}>
             <Ionicons name="musical-note" size={22} color="#FFFFFF" />
             <Text style={styles.audioBtnText} numberOfLines={1}>

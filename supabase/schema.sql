@@ -1,11 +1,15 @@
 -- SoundBoard Pro — Schema do Banco de Dados
 -- Execute este arquivo no SQL Editor do Supabase
 
+-- MIGRATION: renomear coluna color → emoji (rodar uma vez no Supabase SQL Editor)
+-- ALTER TABLE sound_pads RENAME COLUMN color TO emoji;
+-- ALTER TABLE sound_pads ALTER COLUMN emoji SET DEFAULT '🎵';
+
 -- Tabela principal de pads
 CREATE TABLE IF NOT EXISTS sound_pads (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   title       TEXT        NOT NULL,
-  color       TEXT        NOT NULL DEFAULT '#FF5733',
+  emoji       TEXT        NOT NULL DEFAULT '🎵',
   audio_url   TEXT        NOT NULL,
   audio_path  TEXT        NOT NULL,
   play_count  INTEGER     NOT NULL DEFAULT 0,

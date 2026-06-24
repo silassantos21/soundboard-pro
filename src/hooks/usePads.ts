@@ -36,15 +36,15 @@ export function usePads() {
     const { path, url } = await uploadAudio(input.audioUri, input.audioFileName);
     const newPad = await createPad({
       title: input.title,
-      color: input.color,
+      emoji: input.emoji,
       audio_path: path,
       audio_url: url,
     });
     setPads((prev) => [...prev, newPad]);
   }, []);
 
-  const editPad = useCallback(async (id: string, title: string, color: string) => {
-    const updated = await updatePad(id, { title, color });
+  const editPad = useCallback(async (id: string, title: string, emoji: string) => {
+    const updated = await updatePad(id, { title, emoji });
     setPads((prev) => prev.map((p) => (p.id === id ? updated : p)));
   }, []);
 

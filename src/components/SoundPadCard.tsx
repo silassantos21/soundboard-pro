@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useAudioPlayer } from 'expo-audio';
+import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import * as Haptics from 'expo-haptics';
 import type { SoundPad } from '../types';
 
@@ -15,6 +15,7 @@ interface SoundPadCardProps {
 export function SoundPadCard({ pad, onFavorite, onLongPress, onPlay }: SoundPadCardProps) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const player = useAudioPlayer({ uri: pad.audio_url });
+  const status = useAudioPlayerStatus(player);
 
   const handlePress = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -25,9 +26,13 @@ export function SoundPadCard({ pad, onFavorite, onLongPress, onPlay }: SoundPadC
       Animated.timing(scaleAnim, { toValue: 1, duration: 80, useNativeDriver: true }),
     ]).start();
 
-    player.seekTo(0);
-    player.play();
-    void onPlay(pad.id);
+    if (status.playing) {
+      player.pause();
+    } else {
+      player.seekTo(0);
+      player.play();
+      void onPlay(pad.id);
+    }
   };
 
   return (
@@ -46,12 +51,19 @@ export function SoundPadCard({ pad, onFavorite, onLongPress, onPlay }: SoundPadC
 
       <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: pad.color }]}
+          style={[styles.button, status.playing && styles.buttonPlaying]}
           onPress={handlePress}
           onLongPress={() => onLongPress(pad)}
           delayLongPress={500}
           activeOpacity={0.85}
-        />
+        >
+          <Text style={styles.emoji}>{pad.emoji}</Text>
+          {status.playing && (
+            <View style={styles.playingOverlay}>
+              <Ionicons name="pause" size={26} color="rgba(255,255,255,0.95)" />
+            </View>
+          )}
+        </TouchableOpacity>
       </Animated.View>
 
       <Text style={styles.title} numberOfLines={2}>{pad.title}</Text>
@@ -76,13 +88,34 @@ const styles = StyleSheet.create({
   button: {
     width: 76,
     height: 76,
-    borderRadius: 38,
+    borderRadius: 20,
     marginVertical: 8,
-    elevation: 6,
+    backgroundColor: '#272727',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.35,
+    shadowRadius: 5,
+  },
+  buttonPlaying: {
+    borderWidth: 2.5,
+    borderColor: 'rgba(255,255,255,0.6)',
+  },
+  emoji: {
+    fontSize: 40,
+  },
+  playingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 13,

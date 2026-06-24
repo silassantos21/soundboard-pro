@@ -11,19 +11,19 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { ColorPicker } from './ColorPicker';
+import { EmojiPicker } from './EmojiPicker';
 import type { SoundPad } from '../types';
 
 interface EditPadModalProps {
   pad: SoundPad;
   onClose: () => void;
-  onSave: (title: string, color: string) => Promise<void>;
+  onSave: (title: string, emoji: string) => Promise<void>;
   onDelete: () => Promise<void>;
 }
 
 export function EditPadModal({ pad, onClose, onSave, onDelete }: EditPadModalProps) {
   const [title, setTitle] = useState(pad.title);
-  const [color, setColor] = useState(pad.color);
+  const [emoji, setEmoji] = useState(pad.emoji);
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
@@ -33,7 +33,7 @@ export function EditPadModal({ pad, onClose, onSave, onDelete }: EditPadModalPro
     }
     setSaving(true);
     try {
-      await onSave(title.trim(), color);
+      await onSave(title.trim(), emoji);
     } catch (err: any) {
       Alert.alert('Erro', err?.message ?? 'Não foi possível salvar.');
     } finally {
@@ -82,8 +82,8 @@ export function EditPadModal({ pad, onClose, onSave, onDelete }: EditPadModalPro
             placeholderTextColor="#555"
           />
 
-          <Text style={styles.label}>Cor</Text>
-          <ColorPicker selected={color} onSelect={setColor} />
+          <Text style={styles.label}>Emoji</Text>
+          <EmojiPicker selected={emoji} onSelect={setEmoji} />
 
           <TouchableOpacity
             style={[styles.saveBtn, saving && styles.btnDisabled]}
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 16,
     alignItems: 'center',
-    marginTop: 32,
+    marginTop: 8,
     marginBottom: 16,
   },
   btnDisabled: {

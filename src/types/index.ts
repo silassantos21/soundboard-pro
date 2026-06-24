@@ -1,7 +1,7 @@
 export interface SoundPad {
   id: string;
   title: string;
-  color: string;
+  emoji: string;
   audio_url: string;
   audio_path: string;
   play_count: number;
@@ -11,9 +11,9 @@ export interface SoundPad {
   updated_at: string;
 }
 
-export type CreateSoundPadInput = Pick<SoundPad, 'title' | 'color'> & {
+export type CreateSoundPadInput = Pick<SoundPad, 'title' | 'emoji'> & {
   audioUri: string;
   audioFileName: string;
 };
 
-export type UpdateSoundPadInput = Partial<Pick<SoundPad, 'title' | 'color' | 'is_favorite' | 'position'>>;
+export type UpdateSoundPadInput = Partial<Pick<SoundPad, 'title' | 'emoji' | 'is_favorite' | 'position'>>;

@@ -4,10 +4,13 @@ import {
   FlatList,
   StyleSheet,
   Text,
+  TextInput,
+  TouchableOpacity,
   View,
   useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { SoundPadCard } from '../components/SoundPadCard';
 import { FABButton } from '../components/FABButton';
 import { AddPadModal } from '../components/AddPadModal';
@@ -22,6 +25,11 @@ export function HomeScreen() {
   const { pads, loading, error, addPad, editPad, removePad, favoritePad, playPad } = usePads();
   const [showAdd, setShowAdd] = useState(false);
   const [editTarget, setEditTarget] = useState<SoundPad | null>(null);
+  const [query, setQuery] = useState('');
+
+  const filtered = query.trim()
+    ? pads.filter((p) => p.title.toLowerCase().includes(query.toLowerCase()))
+    : pads;
 
   if (loading) {
     return (
@@ -40,18 +48,36 @@ export function HomeScreen() {
         <Text style={styles.headerSub}>{pads.length} sons</Text>
       </View>
 
+      <View style={styles.searchRow}>
+        <Ionicons name="search" size={18} color="#666" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Buscar por nome..."
+          placeholderTextColor="#555"
+          returnKeyType="search"
+          clearButtonMode="never"
+        />
+        {query.length > 0 && (
+          <TouchableOpacity onPress={() => setQuery('')} hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}>
+            <Ionicons name="close-circle" size={18} color="#666" />
+          </TouchableOpacity>
+        )}
+      </View>
+
       {error ? (
         <View style={styles.center}>
           <Text style={styles.errorText}>{error}</Text>
         </View>
       ) : (
         <FlatList
-          data={pads}
+          data={filtered}
           key={numColumns}
           numColumns={numColumns}
           keyExtractor={(item) => item.id}
           style={styles.list}
-          contentContainerStyle={pads.length === 0 ? styles.emptyContainer : styles.grid}
+          contentContainerStyle={filtered.length === 0 ? styles.emptyContainer : styles.grid}
           renderItem={({ item }) => (
             <SoundPadCard
               pad={item}
@@ -63,7 +89,9 @@ export function HomeScreen() {
           ListEmptyComponent={
             <View style={styles.center}>
               <Text style={styles.emptyText}>
-                Nenhum som ainda.{'\n'}Toque em + para adicionar.
+                {query.trim()
+                  ? `Nenhum pad com "${query}".`
+                  : 'Nenhum som ainda.\nToque em + para adicionar.'}
               </Text>
             </View>
           }
@@ -85,8 +113,8 @@ export function HomeScreen() {
         <EditPadModal
           pad={editTarget}
           onClose={() => setEditTarget(null)}
-          onSave={async (title, color) => {
-            await editPad(editTarget.id, title, color);
+          onSave={async (title, emoji) => {
+            await editPad(editTarget.id, title, emoji);
             setEditTarget(null);
           }}
           onDelete={async () => {
@@ -120,6 +148,26 @@ const styles = StyleSheet.create({
   headerSub: {
     fontSize: 14,
     color: '#FFAAAA',
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1A1A1A',
+    marginHorizontal: 14,
+    marginBottom: 8,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  searchIcon: {
+    marginRight: 2,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: '#FFFFFF',
+    paddingVertical: 0,
   },
   list: {
     flex: 1,

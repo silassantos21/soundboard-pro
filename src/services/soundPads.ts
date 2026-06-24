@@ -15,7 +15,7 @@ export async function listPads(): Promise<SoundPad[]> {
 }
 
 export async function createPad(
-  input: Pick<SoundPad, 'title' | 'color' | 'audio_url' | 'audio_path'>,
+  input: Pick<SoundPad, 'title' | 'emoji' | 'audio_url' | 'audio_path'>,
 ): Promise<SoundPad> {
   const { data: existing } = await supabase
     .from('sound_pads')
