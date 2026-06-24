@@ -2,6 +2,7 @@
   "expo": {
     "name": "SoundBoard Pro",
     "slug": "soundboard-pro",
+    "owner": "silassantos30",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,7 +19,10 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -31,6 +35,11 @@
         }
       ],
       "expo-asset"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "21c5cb2d-2c5a-42b0-b627-e8597ea3b9ed"
+      }
+    }
   }
 }
