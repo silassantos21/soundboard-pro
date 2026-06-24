@@ -2,12 +2,12 @@ import { useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
   useWindowDimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { SoundPadCard } from '../components/SoundPadCard';
 import { FABButton } from '../components/FABButton';
 import { AddPadModal } from '../components/AddPadModal';
@@ -25,9 +25,11 @@ export function HomeScreen() {
 
   if (loading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator color="#CC0000" size="large" />
-      </View>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.center}>
+          <ActivityIndicator color="#FFFFFF" size="large" />
+        </View>
+      </SafeAreaView>
     );
   }
 
@@ -48,6 +50,7 @@ export function HomeScreen() {
           key={numColumns}
           numColumns={numColumns}
           keyExtractor={(item) => item.id}
+          style={styles.list}
           contentContainerStyle={pads.length === 0 ? styles.emptyContainer : styles.grid}
           renderItem={({ item }) => (
             <SoundPadCard
@@ -117,6 +120,9 @@ const styles = StyleSheet.create({
   headerSub: {
     fontSize: 14,
     color: '#FFAAAA',
+  },
+  list: {
+    flex: 1,
   },
   grid: {
     paddingHorizontal: 8,

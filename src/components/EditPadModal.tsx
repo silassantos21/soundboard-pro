@@ -47,7 +47,17 @@ export function EditPadModal({ pad, onClose, onSave, onDelete }: EditPadModalPro
       `Deseja remover "${pad.title}"? Esta ação não pode ser desfeita.`,
       [
         { text: 'Cancelar', style: 'cancel' },
-        { text: 'Remover', style: 'destructive', onPress: onDelete },
+        {
+          text: 'Remover',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await onDelete();
+            } catch (err: any) {
+              Alert.alert('Erro', err?.message ?? 'Não foi possível remover o pad.');
+            }
+          },
+        },
       ],
     );
   };

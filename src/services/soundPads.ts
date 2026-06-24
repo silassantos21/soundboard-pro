@@ -22,7 +22,7 @@ export async function createPad(
     .select('position')
     .order('position', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   const position = existing ? existing.position + 1 : 0;
 
@@ -49,7 +49,12 @@ export async function updatePad(id: string, input: UpdateSoundPadInput): Promise
 }
 
 export async function deletePad(id: string, audioPath: string): Promise<void> {
-  await deleteAudio(audioPath);
+  // Tenta remover o arquivo; se já não existir, segue em frente
+  try {
+    await deleteAudio(audioPath);
+  } catch {
+    // arquivo pode já ter sido removido manualmente — não bloqueia a exclusão do registro
+  }
 
   const { error } = await supabase
     .from('sound_pads')

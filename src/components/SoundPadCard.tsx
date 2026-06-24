@@ -27,7 +27,7 @@ export function SoundPadCard({ pad, onFavorite, onLongPress, onPlay }: SoundPadC
 
     player.seekTo(0);
     player.play();
-    onPlay(pad.id);
+    void onPlay(pad.id);
   };
 
   return (

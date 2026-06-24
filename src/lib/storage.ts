@@ -25,7 +25,8 @@ export async function uploadAudio(
     encoding: FileSystem.EncodingType.Base64,
   });
 
-  const storagePath = `${Date.now()}_${fileName.replace(/\s+/g, '_')}`;
+  const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const storagePath = `${Date.now()}_${safeName}`;
 
   const { data, error } = await supabase.storage
     .from(AUDIO_BUCKET)
