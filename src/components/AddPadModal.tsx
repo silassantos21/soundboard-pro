@@ -31,7 +31,7 @@ export function AddPadModal({ visible, onClose, onSave }: AddPadModalProps) {
   const pickAudio = async () => {
     const result = await DocumentPicker.getDocumentAsync({
       type: ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/x-m4a', 'audio/aac'],
-      copyToCacheDirectory: true,
+      copyToCacheDirectory: false,
     });
     if (!result.canceled && result.assets[0]) {
       setAudioUri(result.assets[0].uri);

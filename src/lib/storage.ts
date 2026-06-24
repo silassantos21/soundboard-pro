@@ -1,5 +1,3 @@
-import * as FileSystem from 'expo-file-system/legacy';
-import { decode } from 'base64-arraybuffer';
 import { supabase, AUDIO_BUCKET } from './supabase';
 
 const ALLOWED_MIME: Record<string, string> = {
@@ -21,16 +19,20 @@ export async function uploadAudio(
     throw new Error(`Formato não suportado: .${ext}. Use MP3, WAV, OGG, M4A ou AAC.`);
   }
 
-  const base64 = await FileSystem.readAsStringAsync(localUri, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
+  // fetch() acessa content:// e file:// URIs via bridge nativa do Android/iOS,
+  // contornando o sandbox do expo-file-system que bloqueia paths do DocumentPicker.
+  const response = await fetch(localUri);
+  if (!response.ok && response.status !== 0) {
+    throw new Error(`Não foi possível ler o arquivo (status ${response.status}).`);
+  }
+  const blob = await response.blob();
 
   const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
   const storagePath = `${Date.now()}_${safeName}`;
 
   const { data, error } = await supabase.storage
     .from(AUDIO_BUCKET)
-    .upload(storagePath, decode(base64), {
+    .upload(storagePath, blob, {
       contentType: mimeType,
       upsert: false,
     });
